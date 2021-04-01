@@ -15,7 +15,7 @@ from datetime import datetime
 # custom utilities
 from config import ProjConfig
 from data_utils import register_isaid_truck_data
-
+from custom_trainers import TrainerWithVal
 
 def setup_train_config(train_data_name, val_data_name=None, output_dir=None):
     """
@@ -26,7 +26,7 @@ def setup_train_config(train_data_name, val_data_name=None, output_dir=None):
     cfg.DATASETS.TRAIN = (train_data_name,)
     if val_data_name:
         cfg.DATASETS.TEST = (val_data_name, )
-        cfg.TEST.EVAL_PERIOD = 1      # how often to eval val
+        cfg.TEST.EVAL_PERIOD = 5      # how often to eval val
     cfg.MODEL.DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
     cfg.DATALOADER.NUM_WORKERS = 1
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")
@@ -44,19 +44,6 @@ def setup_train_config(train_data_name, val_data_name=None, output_dir=None):
         cfg.OUTPUT_DIR = os.path.join(output_dir, \
             f'detectron_{datetime.now().strftime("%Y%m%d%H%M%S")}_freeze{cfg.MODEL.BACKBONE.FREEZE_AT}_batchsize{cfg.SOLVER.IMS_PER_BATCH}_lr{cfg.SOLVER.BASE_LR}')
     return cfg
-
-
-class TrainerWithVal(DefaultTrainer):
-    """
-    Build the appropriate evaluate is needed with train with a validation set
-    """
-
-    @classmethod
-    def build_evaluator(cls, cfg, dataset_name, output_folder=None):
-        """class method for evaluating the validation set"""
-        if output_folder is None:
-            output_folder = os.path.join(cfg.OUTPUT_DIR,"inference")
-        return COCOEvaluator(dataset_name, output_dir=output_folder)
 
 
 def main():
