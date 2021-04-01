@@ -38,8 +38,10 @@ def get_train_aug():
         T.RandomContrast(0.8, 1.2),
         T.RandomFlip(prob=0.5, horizontal=True, vertical=False),
         T.RandomFlip(prob=0.5, horizontal=False, vertical=True),
+        T.RandomApply(T.RandomRotation(angle=90, expand=True), prob=0.25),
+        T.RandomApply(T.RandomRotation(angle=270, expand=True), prob=0.25),
         # To avoid losing information after rotation, specify to expand canvas.
-        T.RandomApply(T.RandomRotation(angle=[-30, 30], expand=True), prob=0.25)
+        T.RandomApply(T.RandomRotation(angle=[-30, 30], expand=True), prob=0.125)
     ]
     return custom_aug
 
