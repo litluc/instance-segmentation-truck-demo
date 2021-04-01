@@ -43,7 +43,6 @@ def setup_train_config(train_data_name, val_data_name=None, output_dir=None):
         # specify an output with a few key hyper params
         cfg.OUTPUT_DIR = os.path.join(output_dir, \
             f'detectron_{datetime.now().strftime("%Y%m%d%H%M%S")}_freeze{cfg.MODEL.BACKBONE.FREEZE_AT}_batchsize{cfg.SOLVER.IMS_PER_BATCH}_lr{cfg.SOLVER.BASE_LR}')
-    os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     return cfg
 
 
@@ -61,17 +60,17 @@ class TrainerWithVal(DefaultTrainer):
 
 
 def main():
-    # configure the data
+    # configure the data and config
     proj_config = ProjConfig()
     _ = register_isaid_truck_data(extra_meta={}, register_val=True)
-
     cfg = setup_train_config(
         proj_config.train_data_name,
         proj_config.val_data_name,
         proj_config.model_dir
     )
-    # set up the trainer: wrapper for model training with config
+    os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 
+    # set up the trainer: wrapper for model training with config
     trainer = TrainerWithVal(cfg)
     trainer.resume_or_load(resume=False)
     trainer.train()
