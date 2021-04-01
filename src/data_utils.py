@@ -6,7 +6,7 @@ import detectron2.data.transforms as T
 from config import ProjConfig
 
 
-def register_isaid_truck_data(extra_meta={}, register_val=True, register_test):
+def register_isaid_truck_data(extra_meta={}, register_val=True, register_test=False):
     """
     register project data with name isaid_truck_train/val
     """
