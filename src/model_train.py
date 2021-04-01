@@ -4,25 +4,13 @@ from detectron2.utils.logger import setup_logger
 setup_logger()
 from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, launch
 from detectron2.config import get_cfg
-from detectron2.data.datasets import register_coco_instances
 
 # common imports
 import os
 
 # custom utilities
 from config import ProjConfig
-
-# configure the data
-proj_config = ProjConfig()
-extra_meta = {}     # no additional metadata to be associated w/ dataset
-register_coco_instances('isaid_truck_train', 
-                        extra_meta, 
-                        proj_config.train_anno_path, 
-                        proj_config.train_image_path)
-register_coco_instances('isaid_truck_val', 
-                        extra_meta, 
-                        proj_config.val_anno_path, 
-                        proj_config.val_image_path)
+from data_utils import register_isaid_truck_data
 
 
 def setup_train_config():
@@ -34,8 +22,7 @@ def setup_train_config():
     cfg.DATASETS.TRAIN = ("isaid_truck_train",)
     cfg.DATASETS.TEST = ("isaid_truck_val", )
     cfg.TEST.EVAL_PERIOD = 1      # how often to eval val
-    if not torch.cuda.is_available():
-        cfg.MODEL.DEVICE = 'cpu'
+    cfg.MODEL.DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
     cfg.DATALOADER.NUM_WORKERS = 1
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")  
     cfg.MODEL.BACKBONE.FREEZE_AT = 2   # freeze the first X stages of backbone
@@ -51,6 +38,10 @@ def setup_train_config():
 
 
 def main():
+    # configure the data
+    proj_config = ProjConfig()
+    _ = register_isaid_truck_data(extra_meta={}, register_val=True)
+
     cfg = setup_train_config()
     # set up the trainer: wrapper for model training with config
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
@@ -58,8 +49,11 @@ def main():
     trainer.resume_or_load(resume=False)
     trainer.train()
 
+
 if __name__ == "__main__":
     main()
+
+
 # # Look at training curves in tensorboard:
 # %load_ext tensorboard
 # %tensorboard --logdir output
