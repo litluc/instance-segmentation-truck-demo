@@ -1,6 +1,7 @@
 from detectron2.data.datasets import register_coco_instances
 from detectron2.data import DatasetMapper
 import detectron2.data.transforms as T
+from detectron2.data import build_detection_test_loader, build_detection_train_loader
 
 # custom imports
 from config import ProjConfig
