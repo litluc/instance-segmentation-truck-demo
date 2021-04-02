@@ -7,10 +7,18 @@ Below are high level description of the project:
 - Target: detection and masking all commercial trucks from aerial images
 - Data and labels: [iSAID](https://captain-whu.github.io/iSAID/) data with COCO labels, 'Large Vehicle' category only
 - Model architecture: [Mask RCNN](https://arxiv.org/abs/1703.06870)
-- Implementation: Detectron2
+- Implementation: [Detectron2](https://github.com/facebookresearch/detectron2)
 
 
 ---
+## Reproduce the work
+
+The exhibits are created on a cpu machine. To create a conda environment, update the conda_environment.yml file prefix as needed and create a new project environment as follows.
+```shell
+conda env create -f conda_environment.yml
+source activate truck_detect
+pip install -r requirements.txt
+```
 
 ## Detectron2
 [Detectron2](https://github.com/facebookresearch/detectron2) is Facebook AI Research's next generation software system
