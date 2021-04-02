@@ -101,7 +101,7 @@ def main(args):
     # load the trained model
     model = build_model(cfg)
     checkpointer = DetectionCheckpointer(model)
-    checkpointer.load(cfg.MODEL.WEIGHTS)
+    _ = checkpointer.load(cfg.MODEL.WEIGHTS)
 
     # run inference and evaluation, saving predictions and eval results to output_dir
     eval_result = inference_on_dataset(model, val_dataloader, evaluator)
@@ -112,7 +112,7 @@ def main(args):
     #     json.dump(all_preds, fp)
 
 
-# models/detectron_20210401155414_freeze2_batchsize2_lr0.00025/model_0000009.pth
+# sample model path: models/detectron_20210401155414_freeze2_batchsize2_lr0.00025/model_0000009.pth
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path', type=str)
